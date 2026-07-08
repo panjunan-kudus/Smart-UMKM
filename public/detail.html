@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Detail UMKM — Portal UMKM Panjunan</title>
+<link rel="stylesheet" href="../assets/css/public.css">
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <div class="logo-box">🏪</div>
+      <span id="namaPortalNav">Portal UMKM Panjunan</span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html" class="nav-link">Beranda</a>
+      <a href="umkm-list.html" class="nav-link">Semua UMKM</a>
+      <a href="daftar-umkm.html" class="nav-link">Daftarkan UMKM</a>
+      <a href="tentang.html" class="nav-link">Tentang</a>
+      <a href="../admin/dashboard.html" class="nav-admin">Admin ↗</a>
+    </div>
+    <button class="nav-hamburger" id="hamburger">☰</button>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html">Beranda</a>
+    <a href="umkm-list.html">Semua UMKM</a>
+    <a href="daftar-umkm.html">Daftarkan UMKM</a>
+    <a href="tentang.html">Tentang</a>
+  </div>
+</nav>
+
+<div id="mainContent" style="display:none">
+
+  <!-- Hero Banner -->
+  <div class="detail-hero" id="heroBanner">
+    <div class="detail-hero-overlay"></div>
+  </div>
+
+  <div class="detail-content">
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+      <a href="index.html">Beranda</a>
+      <span>/</span>
+      <a href="umkm-list.html">UMKM</a>
+      <span>/</span>
+      <span id="breadcrumbNama">...</span>
+    </div>
+
+    <!-- Header -->
+    <div class="detail-header">
+      <div class="detail-logo" id="detailLogo"></div>
+      <div class="detail-meta">
+        <div class="kategori" id="detailKategori"></div>
+        <h1 id="detailNama"></h1>
+      </div>
+    </div>
+
+    <!-- Layout -->
+    <div class="detail-layout">
+      <div class="detail-main">
+
+        <!-- Deskripsi -->
+        <div class="detail-section">
+          <h2>📖 Tentang Kami</h2>
+          <p class="deskripsi-text" id="detailDeskripsi"></p>
+        </div>
+
+        <!-- Produk -->
+        <div class="detail-section" id="produkSection">
+          <h2>🛍️ Produk Kami</h2>
+          <div class="produk-grid" id="produkGrid"></div>
+        </div>
+
+        <!-- Galeri -->
+        <div class="detail-section" id="galeriSection">
+          <h2>📸 Galeri Foto</h2>
+          <div class="galeri-public" id="galeriGrid"></div>
+        </div>
+
+      </div>
+
+      <div class="detail-sidebar">
+
+        <!-- Kontak -->
+        <div class="info-card">
+          <h3>Kontak & Sosial</h3>
+          <div id="kontakLinks"></div>
+        </div>
+
+        <!-- Alamat -->
+        <div class="info-card" id="alamatCard" style="display:none">
+          <h3>Lokasi</h3>
+          <div class="info-row">
+            <span class="info-icon">📍</span>
+            <span class="info-val" id="detailAlamat"></span>
+          </div>
+          <a id="mapsLink" href="#" target="_blank" class="cta-maps" style="margin-top:12px;font-size:13px;padding:10px">🗺️ Buka Google Maps</a>
+        </div>
+
+        <!-- Jam Operasional -->
+        <div class="info-card" id="jamCard" style="display:none">
+          <h3>Jam Operasional</h3>
+          <table class="jam-table" id="jamTable"></table>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Not Found -->
+<div id="notFound" style="display:none">
+  <div class="empty" style="padding:120px 20px">
+    <div class="icon">🔍</div>
+    <h3>UMKM Tidak Ditemukan</h3>
+    <p>UMKM yang Anda cari tidak tersedia atau belum dipublish.</p>
+    <a href="index.html" class="btn btn-primary" style="display:inline-flex;margin-top:20px;align-items:center;gap:8px;padding:12px 24px;background:var(--green);color:#fff;border-radius:10px;font-weight:600">← Kembali ke Beranda</a>
+  </div>
+</div>
+
+<!-- Lightbox -->
+<div id="lightbox" class="lightbox" style="display:none" onclick="document.getElementById('lightbox').style.display='none'">
+  <img id="lightboxImg">
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div class="footer-brand"><h3 id="footerNama">Portal UMKM Panjunan</h3><p id="footerDesc"></p></div>
+      <div class="footer-col"><h4>Navigasi</h4><a href="index.html">Beranda</a><a href="umkm-list.html">Semua UMKM</a><a href="daftar-umkm.html">Daftarkan UMKM</a><a href="tentang.html">Tentang</a></div>
+      <div class="footer-col"><h4>Kontak</h4><a id="footerWa" href="#">WhatsApp</a><a id="footerIg" href="#">Instagram</a></div>
+    </div>
+    <div class="footer-bottom">© 2026 <span id="footerNama2">Portal UMKM Panjunan</span> · Tim KKN · Desa Panjunan, Kudus</div>
+  </div>
+</footer>
+
+<script src="../config.js"></script>
+<script src="../assets/js/storage.js"></script>
+<script src="../assets/js/utils.js"></script>
+<script>
+  const settings = Storage.getSettings();
+  document.getElementById('namaPortalNav').textContent = settings.namaPortal || 'Portal UMKM Panjunan';
+  document.getElementById('footerNama').textContent = settings.namaPortal || '';
+  document.getElementById('footerNama2').textContent = settings.namaPortal || '';
+  document.getElementById('footerDesc').textContent = settings.deskripsiPortal || '';
+  if (settings.whatsapp) document.getElementById('footerWa').href = Utils.waLink(settings.whatsapp);
+  if (settings.instagram) document.getElementById('footerIg').href = Utils.igLink(settings.instagram);
+
+  const slug = Utils.getParam('slug');
+  const id = Utils.getParam('id');
+  const umkmData = slug ? Storage.getUmkmBySlug(slug) : (id ? Storage.getUmkmById(id) : null);
+  const umkm = umkmData && umkmData.status === 'published' ? umkmData : null;
+
+  if (!umkm || umkm.status !== 'published') {
+    document.getElementById('notFound').style.display = 'block';
+  } else {
+    document.getElementById('mainContent').style.display = 'block';
+    document.title = `${umkm.nama} — ${settings.namaPortal || 'Portal UMKM'}`;
+
+    const cats = Storage.getCategories();
+    const cat = cats.find(c => c.id === umkm.kategori);
+
+    // Breadcrumb
+    document.getElementById('breadcrumbNama').textContent = umkm.nama;
+
+    // Hero
+    const hero = document.getElementById('heroBanner');
+    if (umkm.banner) {
+      hero.style.backgroundImage = `url(${umkm.banner})`;
+      hero.style.backgroundSize = 'cover'; hero.style.backgroundPosition = 'center';
+    } else {
+      hero.style.background = `linear-gradient(135deg, ${umkm.warnaUtama}33, ${umkm.warnaUtama}88)`;
+    }
+
+    // Logo
+    const logoEl = document.getElementById('detailLogo');
+    logoEl.style.background = umkm.warnaUtama + '22';
+    if (umkm.logo) logoEl.innerHTML = `<img src="${umkm.logo}" alt="logo">`;
+    else { logoEl.textContent = umkm.nama.charAt(0); logoEl.style.color = umkm.warnaUtama; logoEl.style.fontSize = '32px'; logoEl.style.display = 'flex'; logoEl.style.alignItems = 'center'; logoEl.style.justifyContent = 'center'; }
+
+    // Meta
+    document.getElementById('detailKategori').textContent = cat ? `${cat.ikon} ${cat.nama}` : umkm.kategori;
+    document.getElementById('detailKategori').style.color = umkm.warnaUtama;
+    document.getElementById('detailNama').textContent = umkm.nama;
+    document.getElementById('detailDeskripsi').textContent = umkm.deskripsi || 'Belum ada deskripsi.';
+
+    // Kontak & Marketplace
+    const kontak = document.getElementById('kontakLinks');
+    const ctaBtns = [];
+    if (umkm.whatsapp) ctaBtns.push(`<a href="${Utils.waLink(umkm.whatsapp)}" target="_blank" class="cta-wa">💬 WhatsApp</a>`);
+    if (umkm.gofood)    ctaBtns.push(`<a href="${umkm.gofood}" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:8px;background:#e53e00;color:#fff;padding:13px 20px;border-radius:12px;font-weight:700;font-size:15px;margin-bottom:10px">🛵 GoFood</a>`);
+    if (umkm.grabfood)  ctaBtns.push(`<a href="${umkm.grabfood}" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:8px;background:#00b14f;color:#fff;padding:13px 20px;border-radius:12px;font-weight:700;font-size:15px;margin-bottom:10px">🟢 GrabFood</a>`);
+    if (umkm.shopee)    ctaBtns.push(`<a href="${umkm.shopee}" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:8px;background:#f05d2f;color:#fff;padding:13px 20px;border-radius:12px;font-weight:700;font-size:15px;margin-bottom:10px">🛒 Shopee</a>`);
+    if (umkm.tokopedia) ctaBtns.push(`<a href="${umkm.tokopedia}" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:8px;background:#42b549;color:#fff;padding:13px 20px;border-radius:12px;font-weight:700;font-size:15px;margin-bottom:10px">🛍️ Tokopedia</a>`);
+    if (umkm.tiktokshop)ctaBtns.push(`<a href="${umkm.tiktokshop}" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:8px;background:#010101;color:#fff;padding:13px 20px;border-radius:12px;font-weight:700;font-size:15px;margin-bottom:10px">🎵 TikTok Shop</a>`);
+    if (umkm.instagram) ctaBtns.push(`<a href="${Utils.igLink(umkm.instagram)}" target="_blank" class="cta-ig">📸 Instagram</a>`);
+    if (umkm.facebook)  ctaBtns.push(`<a href="${umkm.facebook}" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:8px;background:#1877f2;color:#fff;padding:13px 20px;border-radius:12px;font-weight:700;font-size:15px;margin-bottom:10px">👍 Facebook</a>`);
+    if (ctaBtns.length) kontak.innerHTML = ctaBtns.join('');
+    else kontak.innerHTML = '<p style="color:var(--text-2);font-size:13px">Belum ada info kontak.</p>';
+
+    // Alamat & Maps
+    if (umkm.alamat) {
+      document.getElementById('alamatCard').style.display = 'block';
+      document.getElementById('detailAlamat').textContent = umkm.alamat;
+      if (umkm.mapsUrl) { document.getElementById('mapsLink').href = umkm.mapsUrl; document.getElementById('mapsLink').style.display = 'flex'; }
+      else document.getElementById('mapsLink').style.display = 'none';
+    }
+
+    // Jam
+    const jam = umkm.jamOperasional;
+    if (jam && Object.keys(jam).length) {
+      document.getElementById('jamCard').style.display = 'block';
+      const today = ['minggu','senin','selasa','rabu','kamis','jumat','sabtu'][new Date().getDay()];
+      const hariLabel = {senin:'Senin',selasa:'Selasa',rabu:'Rabu',kamis:'Kamis',jumat:'Jumat',sabtu:'Sabtu',minggu:'Minggu'};
+      document.getElementById('jamTable').innerHTML = Object.entries(hariLabel).map(([h,l]) => {
+        const val = jam[h] || '—';
+        const tutup = val.toLowerCase() === 'tutup';
+        return `<tr${h===today?' class="hari-ini"':''}>
+          <td>${l}</td>
+          <td class="${tutup?'tutup':''}">${val}</td>
+        </tr>`;
+      }).join('');
+    }
+
+    // Produk
+    if (umkm.produk && umkm.produk.length) {
+      document.getElementById('produkGrid').innerHTML = umkm.produk.map(p => `
+        <div class="produk-card">
+          ${p.foto ? `<img src="${p.foto}" alt="${p.nama}">` : `<div style="height:140px;background:${umkm.warnaUtama}22;display:flex;align-items:center;justify-content:center;font-size:36px">🛍️</div>`}
+          <div class="produk-card-body">
+            <div class="produk-card-nama">${p.nama}</div>
+            <div class="produk-card-harga" style="color:${umkm.warnaUtama}">${Utils.formatHarga(p.harga)}</div>
+            ${p.deskripsi ? `<div class="produk-card-desc">${p.deskripsi}</div>` : ''}
+          </div>
+        </div>`).join('');
+    } else document.getElementById('produkSection').style.display = 'none';
+
+    // Galeri
+    if (umkm.galeri && umkm.galeri.length) {
+      document.getElementById('galeriGrid').innerHTML = umkm.galeri.map(g => {
+        const src = g.url || g;
+        return `<img src="${src}" alt="Galeri ${umkm.nama}" loading="lazy" onclick="openLightbox('${src}')">`;
+      }).join('');
+    } else document.getElementById('galeriSection').style.display = 'none';
+  }
+
+  function openLightbox(src) {
+    document.getElementById('lightboxImg').src = src;
+    document.getElementById('lightbox').style.display = 'flex';
+  }
+
+  document.getElementById('hamburger').onclick = () => document.getElementById('mobileMenu').classList.toggle('open');
+</script>
+</body>
+</html>

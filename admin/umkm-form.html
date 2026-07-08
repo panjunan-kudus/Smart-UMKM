@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Form UMKM — Admin UMKM Panjunan</title>
+<link rel="stylesheet" href="../assets/css/admin.css">
+<style>
+  .mkt-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .mkt-input-row { display: flex; align-items: center; gap: 8px; }
+  .mkt-icon { font-size: 20px; flex-shrink: 0; width: 28px; text-align: center; }
+  @media (max-width: 640px) { .mkt-grid { grid-template-columns: 1fr; } }
+
+  /* Section visibility toggles */
+  .seksi-list { display: flex; flex-direction: column; gap: 0; }
+  .seksi-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 0; border-bottom: 1px solid var(--border);
+  }
+  .seksi-item:last-child { border-bottom: none; }
+  .seksi-info { display: flex; align-items: center; gap: 10px; }
+  .seksi-icon { font-size: 20px; width: 28px; text-align: center; }
+  .seksi-label { font-size: 14px; font-weight: 600; }
+  .seksi-desc { font-size: 12px; color: var(--text-2); margin-top: 2px; }
+</style>
+</head>
+<body>
+<div class="layout">
+
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-row">
+      <div class="logo-box">🏪</div>
+      <div class="logo-text"><h2>UMKM Panjunan</h2><p>Panel Admin</p></div>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">
+      <div class="nav-label">Menu Utama</div>
+      <a href="dashboard.html" class="nav-item"><span class="nav-icon">📊</span> Dashboard</a>
+      <a href="umkm-list.html" class="nav-item"><span class="nav-icon">🏪</span> Daftar UMKM</a>
+      <a href="umkm-form.html" class="nav-item active"><span class="nav-icon">➕</span> Tambah UMKM</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Pengaturan</div>
+      <a href="settings.html" class="nav-item"><span class="nav-icon">⚙️</span> Pengaturan</a>
+      <a href="../public/index.html" target="_blank" class="nav-item"><span class="nav-icon">🌐</span> Lihat Portal</a>
+    </div>
+  </nav>
+  <div class="sidebar-footer"><button class="logout-btn" id="logoutBtn">🚪 Keluar</button></div>
+</aside>
+
+<div class="main">
+  <header class="topbar">
+    <div style="display:flex;align-items:center;gap:12px">
+      <button class="hamburger" id="hamburger">☰</button>
+      <div class="topbar-left">
+        <h2 id="pageTitle">Tambah UMKM Baru</h2>
+        <p id="pageSubtitle">Isi data UMKM — preview langsung di kanan</p>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <a href="umkm-list.html" class="btn btn-outline btn-sm">← Kembali</a>
+      <button class="btn btn-outline btn-sm" id="previewBtn">👁 Preview</button>
+      <button class="btn btn-primary btn-sm" id="saveBtn">💾 Simpan</button>
+    </div>
+  </header>
+
+  <div class="page-content">
+
+    <!-- Tabs -->
+    <div class="tabs" id="tabsNav">
+      <button class="tab-btn active" data-tab="info">📋 Info</button>
+      <button class="tab-btn" data-tab="sosial">🔗 Sosial & Marketplace</button>
+      <button class="tab-btn" data-tab="jam">⏰ Jam Buka</button>
+      <button class="tab-btn" data-tab="media">📸 Foto</button>
+      <button class="tab-btn" data-tab="produk">🛍️ Produk</button>
+      <button class="tab-btn" data-tab="tampilan">🎨 Tampilan</button>
+      <button class="tab-btn" data-tab="publish">🚀 Publish</button>
+    </div>
+
+    <div>
+
+        <!-- TAB: INFO DASAR -->
+        <div class="tab-panel active" id="tab-info">
+          <div class="card">
+            <div class="card-header"><h3>Informasi Dasar UMKM</h3></div>
+            <div class="card-body">
+              <div class="form-row form-row-2">
+                <div class="form-group">
+                  <label class="form-label">Nama UMKM <span>*</span></label>
+                  <input class="form-input" type="text" id="nama" placeholder="Contoh: Warung Bu Ani" required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Slug URL</label>
+                  <input class="form-input" type="text" id="slug" placeholder="warung-bu-ani">
+                  <p class="form-hint">Otomatis dari nama. Digunakan di URL.</p>
+                </div>
+              </div>
+              <div class="form-row form-row-2">
+                <div class="form-group">
+                  <label class="form-label">Kategori <span>*</span></label>
+                  <select class="form-select" id="kategori">
+                    <option value="">Pilih Kategori</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Alamat</label>
+                  <input class="form-input" type="text" id="alamat" placeholder="Jl. Panjunan No. 1, Kudus">
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Deskripsi</label>
+                <textarea class="form-textarea" id="deskripsi" rows="4" placeholder="Ceritakan tentang UMKM ini..."></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB: SOSIAL & MARKETPLACE -->
+        <div class="tab-panel" id="tab-sosial">
+          <div class="card">
+            <div class="card-header"><h3>Kontak Langsung</h3></div>
+            <div class="card-body">
+              <div class="form-row form-row-2">
+                <div class="form-group">
+                  <label class="form-label">WhatsApp</label>
+                  <div class="mkt-input-row">
+                    <span class="mkt-icon">💬</span>
+                    <input class="form-input" type="text" id="whatsapp" placeholder="08123456789">
+                  </div>
+                  <p class="form-hint">Format: 08xxx atau 628xxx</p>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Instagram</label>
+                  <div class="mkt-input-row">
+                    <span class="mkt-icon">📸</span>
+                    <input class="form-input" type="text" id="instagram" placeholder="namaakun (tanpa @)">
+                  </div>
+                </div>
+              </div>
+              <div class="form-row form-row-2">
+                <div class="form-group">
+                  <label class="form-label">Facebook</label>
+                  <div class="mkt-input-row">
+                    <span class="mkt-icon">👍</span>
+                    <input class="form-input" type="url" id="facebook" placeholder="https://facebook.com/namahalaman">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Google Maps</label>
+                  <div class="mkt-input-row">
+                    <span class="mkt-icon">🗺️</span>
+                    <input class="form-input" type="url" id="mapsUrl" placeholder="https://maps.google.com/...">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="margin-top:16px">
+            <div class="card-header">
+              <h3>🛒 Marketplace & Pesan Online</h3>
+            </div>
+            <div class="card-body">
+              <p style="font-size:13px;color:var(--text-2);margin-bottom:20px">Isi link toko/profil online Anda. Kosongkan jika tidak ada. Link ini akan tampil sebagai tombol di halaman UMKM.</p>
+              <div class="mkt-grid">
+                <div class="form-group">
+                  <label class="form-label">Shopee</label>
+                  <div class="mkt-input-row">
+                    <span class="mkt-icon" style="background:#f05d2f;color:#fff;border-radius:8px;padding:2px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:14px">🛒</span>
+                    <input class="form-input" type="url" id="shopee" placeholder="https://shopee.co.id/namatoko">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Tokopedia</label>
+                  <div class="mkt-input-row">
+                    <span class="mkt-icon" style="background:#42b549;color:#fff;border-radius:8px;padding:2px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:14px">🛍️</span>
+                    <input class="form-input" type="url" id="tokopedia" placeholder="https://tokopedia.com/namatoko">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">GoFood</label>
+                  <div class="mkt-input-row">
+                    <span class="mkt-icon" style="background:#e53e00;color:#fff;border-radius:8px;padding:2px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:14px">🛵</span>
+                    <input class="form-input" type="url" id="gofood" placeholder="https://gofood.co.id/...">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">GrabFood</label>
+                  <div class="mkt-input-row">
+                    <span class="mkt-icon" style="background:#00b14f;color:#fff;border-radius:8px;padding:2px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:14px">🟢</span>
+                    <input class="form-input" type="url" id="grabfood" placeholder="https://food.grab.com/...">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">TikTok Shop</label>
+                  <div class="mkt-input-row">
+                    <span class="mkt-icon" style="background:#010101;color:#fff;border-radius:8px;padding:2px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:14px">🎵</span>
+                    <input class="form-input" type="url" id="tiktokshop" placeholder="https://www.tiktok.com/@namatoko">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB: JAM BUKA -->
+        <div class="tab-panel" id="tab-jam">
+          <div class="card">
+            <div class="card-header">
+              <h3>Jam Operasional</h3>
+              <button class="btn btn-outline btn-sm" id="isiSemua">Isi Semua Hari</button>
+            </div>
+            <div class="card-body">
+              <p style="color:var(--text-2);font-size:13px;margin-bottom:20px">Ketik "Tutup" jika tidak buka pada hari tersebut.</p>
+              <div class="jam-grid" id="jamGrid"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB: MEDIA -->
+        <div class="tab-panel" id="tab-media">
+          <div class="card">
+            <div class="card-header"><h3>Logo & Foto Utama</h3></div>
+            <div class="card-body">
+              <div class="form-row form-row-3">
+                <div class="form-group">
+                  <label class="form-label">Logo UMKM</label>
+                  <div id="logoArea">
+                    <div class="upload-area" onclick="document.getElementById('logoInput').click()">
+                      <div class="upload-icon">🖼️</div>
+                      <p><strong>Klik upload</strong></p>
+                      <p style="font-size:12px">PNG, JPG</p>
+                    </div>
+                  </div>
+                  <input type="file" id="logoInput" accept="image/*" style="display:none">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Banner</label>
+                  <div id="bannerArea">
+                    <div class="upload-area" onclick="document.getElementById('bannerInput').click()">
+                      <div class="upload-icon">🌅</div>
+                      <p><strong>Klik upload</strong></p>
+                      <p style="font-size:12px">1200×400px ideal</p>
+                    </div>
+                  </div>
+                  <input type="file" id="bannerInput" accept="image/*" style="display:none">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Foto Toko</label>
+                  <div id="fotoTokoArea">
+                    <div class="upload-area" onclick="document.getElementById('fotoTokoInput').click()">
+                      <div class="upload-icon">🏪</div>
+                      <p><strong>Klik upload</strong></p>
+                      <p style="font-size:12px">Tampak depan</p>
+                    </div>
+                  </div>
+                  <input type="file" id="fotoTokoInput" accept="image/*" style="display:none">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="margin-top:16px">
+            <div class="card-header">
+              <h3>Galeri Foto</h3>
+              <button class="btn btn-outline btn-sm" onclick="document.getElementById('galeriInput').click()">+ Tambah Foto</button>
+            </div>
+            <div class="card-body">
+              <input type="file" id="galeriInput" accept="image/*" multiple style="display:none">
+              <div class="galeri-grid" id="galeriGrid">
+                <div style="aspect-ratio:1;border:2px dashed var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-2);font-size:28px" onclick="document.getElementById('galeriInput').click()">+</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB: PRODUK -->
+        <div class="tab-panel" id="tab-produk">
+          <div class="card">
+            <div class="card-header">
+              <h3>Daftar Produk</h3>
+              <button class="btn btn-outline btn-sm" id="addProdukBtn">+ Tambah Produk</button>
+            </div>
+            <div class="card-body">
+              <div class="produk-list" id="produkList"></div>
+              <div id="produkEmpty" style="text-align:center;padding:32px;color:var(--text-2)">
+                <div style="font-size:36px;margin-bottom:12px">🛍️</div>
+                <p>Belum ada produk. Klik "+ Tambah Produk".</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB: TAMPILAN -->
+        <div class="tab-panel" id="tab-tampilan">
+          <div class="card">
+            <div class="card-header"><h3>Pilih Template</h3></div>
+            <div class="card-body">
+              <div class="template-grid">
+                <div class="template-card" data-tpl="minimal" onclick="selectTemplate(this,'minimal')">
+                  <div class="template-thumb" style="background:linear-gradient(135deg,#16a34a,#15803d)">Minimal</div>
+                  <div class="template-label">Minimal <span class="check">✓</span></div>
+                </div>
+                <div class="template-card" data-tpl="modern" onclick="selectTemplate(this,'modern')">
+                  <div class="template-thumb" style="background:linear-gradient(135deg,#3b82f6,#1d4ed8)">Modern</div>
+                  <div class="template-label">Modern <span class="check">✓</span></div>
+                </div>
+                <div class="template-card" data-tpl="gallery" onclick="selectTemplate(this,'gallery')">
+                  <div class="template-thumb" style="background:linear-gradient(135deg,#f59e0b,#b45309)">Gallery</div>
+                  <div class="template-label">Gallery <span class="check">✓</span></div>
+                </div>
+                <div class="template-card" data-tpl="premium" onclick="selectTemplate(this,'premium')">
+                  <div class="template-thumb" style="background:linear-gradient(135deg,#1e293b,#0f172a)">Premium</div>
+                  <div class="template-label">Premium <span class="check">✓</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="margin-top:16px">
+            <div class="card-header"><h3>Warna Utama</h3></div>
+            <div class="card-body">
+              <div class="color-input-row">
+                <input type="color" id="warnaUtama" value="#16a34a">
+                <div>
+                  <p style="font-size:14px;font-weight:600">Warna Aksen</p>
+                  <p style="font-size:12px;color:var(--text-2)">Dipakai di tombol, heading, dan badge halaman UMKM.</p>
+                </div>
+              </div>
+              <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
+                <span style="font-size:12px;color:var(--text-2);align-self:center">Preset:</span>
+                <button class="btn btn-sm" style="background:#16a34a;color:#fff" onclick="setWarna('#16a34a')">Hijau</button>
+                <button class="btn btn-sm" style="background:#2563eb;color:#fff" onclick="setWarna('#2563eb')">Biru</button>
+                <button class="btn btn-sm" style="background:#7c3aed;color:#fff" onclick="setWarna('#7c3aed')">Ungu</button>
+                <button class="btn btn-sm" style="background:#dc2626;color:#fff" onclick="setWarna('#dc2626')">Merah</button>
+                <button class="btn btn-sm" style="background:#b45309;color:#fff" onclick="setWarna('#b45309')">Coklat</button>
+                <button class="btn btn-sm" style="background:#0891b2;color:#fff" onclick="setWarna('#0891b2')">Cyan</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Visibilitas Seksi -->
+          <div class="card" style="margin-top:16px">
+            <div class="card-header">
+              <h3>👁 Visibilitas Seksi</h3>
+              <span style="font-size:12px;color:var(--text-2)">Tampil di halaman publik</span>
+            </div>
+            <div class="card-body">
+              <p style="font-size:13px;color:var(--text-2);margin-bottom:16px">Aktifkan/nonaktifkan seksi yang ingin ditampilkan di halaman UMKM publik.</p>
+              <div class="seksi-list">
+
+                <div class="seksi-item">
+                  <div class="seksi-info">
+                    <span class="seksi-icon">📖</span>
+                    <div>
+                      <div class="seksi-label">Tentang / Deskripsi</div>
+                      <div class="seksi-desc">Cerita dan penjelasan tentang UMKM</div>
+                    </div>
+                  </div>
+                  <label class="toggle" title="Tampilkan seksi Tentang">
+                    <input type="checkbox" id="sek-tentang" checked>
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+
+                <div class="seksi-item">
+                  <div class="seksi-info">
+                    <span class="seksi-icon">🛍️</span>
+                    <div>
+                      <div class="seksi-label">Produk</div>
+                      <div class="seksi-desc">Daftar produk dan harga</div>
+                    </div>
+                  </div>
+                  <label class="toggle" title="Tampilkan seksi Produk">
+                    <input type="checkbox" id="sek-produk" checked>
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+
+                <div class="seksi-item">
+                  <div class="seksi-info">
+                    <span class="seksi-icon">📸</span>
+                    <div>
+                      <div class="seksi-label">Galeri Foto</div>
+                      <div class="seksi-desc">Koleksi foto-foto UMKM</div>
+                    </div>
+                  </div>
+                  <label class="toggle" title="Tampilkan seksi Galeri">
+                    <input type="checkbox" id="sek-galeri" checked>
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+
+                <div class="seksi-item">
+                  <div class="seksi-info">
+                    <span class="seksi-icon">⏰</span>
+                    <div>
+                      <div class="seksi-label">Jam Operasional</div>
+                      <div class="seksi-desc">Jam buka setiap hari</div>
+                    </div>
+                  </div>
+                  <label class="toggle" title="Tampilkan seksi Jam Operasional">
+                    <input type="checkbox" id="sek-jam" checked>
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+
+                <div class="seksi-item">
+                  <div class="seksi-info">
+                    <span class="seksi-icon">🔗</span>
+                    <div>
+                      <div class="seksi-label">Kontak & Marketplace</div>
+                      <div class="seksi-desc">WhatsApp, Shopee, GoFood, dll</div>
+                    </div>
+                  </div>
+                  <label class="toggle" title="Tampilkan seksi Kontak">
+                    <input type="checkbox" id="sek-kontak" checked>
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick preview shortcut -->
+          <div style="margin-top:16px;background:var(--green-50);border:1px solid var(--green-light);border-radius:var(--radius);padding:16px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+            <div>
+              <p style="font-size:14px;font-weight:700;color:var(--green-dark)">Lihat hasilnya langsung</p>
+              <p style="font-size:12px;color:var(--text-2);margin-top:2px">Simpan dulu, lalu buka preview di tab baru</p>
+            </div>
+            <button class="btn btn-primary" id="previewBtnTampilan">👁 Buka Preview</button>
+          </div>
+        </div>
+
+        <!-- TAB: PUBLISH -->
+        <div class="tab-panel" id="tab-publish">
+          <div class="card">
+            <div class="card-header"><h3>Status & Visibilitas</h3></div>
+            <div class="card-body">
+              <div class="form-group">
+                <label class="form-label">Status UMKM</label>
+                <div class="toggle-wrap">
+                  <label class="toggle"><input type="checkbox" id="statusToggle"><span class="toggle-slider"></span></label>
+                  <span id="statusLabel" style="font-size:14px;font-weight:600">Draft (tidak terlihat publik)</span>
+                </div>
+                <p class="form-hint">Aktifkan agar UMKM tampil di portal publik.</p>
+              </div>
+              <div class="divider"></div>
+              <div class="form-group">
+                <label class="form-label">UMKM Unggulan</label>
+                <div class="toggle-wrap">
+                  <label class="toggle"><input type="checkbox" id="featuredToggle"><span class="toggle-slider"></span></label>
+                  <span id="featuredLabel" style="font-size:14px;font-weight:600">Tidak unggulan</span>
+                </div>
+                <p class="form-hint">Unggulan tampil di bagian atas homepage.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="publish-panel" style="margin-top:16px" id="publishPanel">
+            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+              <div>
+                <h3 style="font-size:16px;font-weight:700;color:var(--green-dark)">🚀 Publish UMKM</h3>
+                <p style="font-size:13px;color:var(--text-2);margin-top:4px">Simpan dan simulasikan proses publish ke website.</p>
+              </div>
+              <button class="btn btn-primary" id="publishBtn">🚀 Publish Sekarang</button>
+            </div>
+            <div class="publish-steps" id="publishSteps" style="display:none"></div>
+          </div>
+        </div>
+
+    </div>
+  </div><!-- end page-content -->
+</div>
+</div>
+
+<!-- Produk Modal -->
+<div class="modal-overlay" id="produkModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="produkModalTitle">Tambah Produk</h3>
+      <button class="modal-close" onclick="closeProdukModal()">✕</button>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Nama Produk <span>*</span></label>
+      <input class="form-input" type="text" id="produkNama" placeholder="Nasi Pecel">
+    </div>
+    <div class="form-row form-row-2">
+      <div class="form-group">
+        <label class="form-label">Harga (Rp)</label>
+        <input class="form-input" type="number" id="produkHarga" placeholder="10000">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Foto Produk</label>
+        <input class="form-input" type="file" id="produkFoto" accept="image/*">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Deskripsi Singkat</label>
+      <input class="form-input" type="text" id="produkDesc" placeholder="Deskripsi singkat produk">
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeProdukModal()">Batal</button>
+      <button class="btn btn-primary" onclick="saveProduk()">Simpan Produk</button>
+    </div>
+  </div>
+</div>
+
+<script src="../config.js"></script>
+<script src="../assets/js/gas.js"></script>
+<script src="../assets/js/storage.js"></script>
+<script src="../assets/js/utils.js"></script>
+<script src="../assets/js/templates.js"></script>
+<script>
+if (!Storage.requireAuth()) {}
+
+const urlId = Utils.getParam('id');
+let isEdit = !!urlId;
+const DEFAULT_SEKSI = { tentang: true, produk: true, galeri: true, jam: true, kontak: true };
+let formData = {
+  id: urlId || Utils.generateId(),
+  slug: '', nama: '', kategori: '', deskripsi: '', alamat: '',
+  whatsapp: '', instagram: '', mapsUrl: '', facebook: '',
+  shopee: '', tokopedia: '', gofood: '', grabfood: '', tiktokshop: '',
+  template: 'minimal', warnaUtama: '#16a34a',
+  featured: false, status: 'draft',
+  logo: null, banner: null, fotoToko: null,
+  produk: [], galeri: [], jamOperasional: {},
+  sectionSettings: { ...DEFAULT_SEKSI },
+};
+let editProdukIdx = null;
+
+// Load existing UMKM if editing
+if (isEdit) {
+  const existing = Storage.getUmkmById(urlId);
+  if (existing) {
+    formData = {
+      shopee: '', tokopedia: '', gofood: '', grabfood: '', tiktokshop: '', facebook: '',
+      sectionSettings: { ...DEFAULT_SEKSI },
+      ...existing,
+    };
+    document.getElementById('pageTitle').textContent = 'Edit UMKM';
+    document.getElementById('pageSubtitle').textContent = existing.nama;
+  }
+}
+
+// ---- Kategori dropdown ----
+const cats = Storage.getCategories();
+const katSelect = document.getElementById('kategori');
+cats.forEach(c => {
+  const o = document.createElement('option');
+  o.value = c.id; o.textContent = `${c.ikon} ${c.nama}`;
+  if (c.id === formData.kategori) o.selected = true;
+  katSelect.appendChild(o);
+});
+
+// ---- Field binding helpers ----
+function bind(id, field) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.value = formData[field] || '';
+  el.addEventListener('input', function() { formData[field] = this.value; });
+}
+
+function fillFields() {
+  bind('nama', 'nama');
+  bind('slug', 'slug');
+  bind('deskripsi', 'deskripsi');
+  bind('alamat', 'alamat');
+  bind('whatsapp', 'whatsapp');
+  bind('instagram', 'instagram');
+  bind('mapsUrl', 'mapsUrl');
+  bind('facebook', 'facebook');
+  bind('shopee', 'shopee');
+  bind('tokopedia', 'tokopedia');
+  bind('gofood', 'gofood');
+  bind('grabfood', 'grabfood');
+  bind('tiktokshop', 'tiktokshop');
+
+  document.getElementById('warnaUtama').value = formData.warnaUtama || '#16a34a';
+  document.getElementById('warnaUtama').addEventListener('input', function() { formData.warnaUtama = this.value; });
+
+  document.getElementById('statusToggle').checked = formData.status === 'published';
+  document.getElementById('featuredToggle').checked = formData.featured;
+  updateStatusLabel(); updateFeaturedLabel();
+  selectTemplateProgrammatic(formData.template);
+
+  // Section visibility toggles
+  const ss = formData.sectionSettings || DEFAULT_SEKSI;
+  ['tentang','produk','galeri','jam','kontak'].forEach(k => {
+    const el = document.getElementById('sek-' + k);
+    if (el) el.checked = ss[k] !== false;
+  });
+
+  renderGaleri(); renderProdukList();
+  if (formData.logo) showImagePreview('logoArea', formData.logo, 'logo');
+  if (formData.banner) showImagePreview('bannerArea', formData.banner, 'banner');
+  if (formData.fotoToko) showImagePreview('fotoTokoArea', formData.fotoToko, 'fotoToko');
+}
+
+// ---- Section visibility: sync to formData ----
+['tentang','produk','galeri','jam','kontak'].forEach(k => {
+  const el = document.getElementById('sek-' + k);
+  if (el) el.addEventListener('change', function() {
+    formData.sectionSettings[k] = this.checked;
+  });
+});
+
+// Auto slug
+document.getElementById('nama').addEventListener('input', function() {
+  formData.nama = this.value;
+  if (!isEdit || !formData.slug) {
+    formData.slug = Utils.generateSlug(this.value);
+    document.getElementById('slug').value = formData.slug;
+  }
+});
+
+document.getElementById('kategori').addEventListener('change', function() { formData.kategori = this.value; });
+
+// Toggles
+document.getElementById('statusToggle').addEventListener('change', function() {
+  formData.status = this.checked ? 'published' : 'draft'; updateStatusLabel();
+});
+document.getElementById('featuredToggle').addEventListener('change', function() {
+  formData.featured = this.checked; updateFeaturedLabel();
+});
+function updateStatusLabel() {
+  document.getElementById('statusLabel').textContent = formData.status === 'published' ? 'Publish (terlihat publik) ✅' : 'Draft (tidak terlihat publik)';
+}
+function updateFeaturedLabel() {
+  document.getElementById('featuredLabel').textContent = formData.featured ? 'UMKM Unggulan ⭐' : 'Tidak unggulan';
+}
+
+// Template selection
+function selectTemplate(el, tpl) {
+  document.querySelectorAll('.template-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  formData.template = tpl;
+}
+function selectTemplateProgrammatic(tpl) {
+  document.querySelectorAll('.template-card').forEach(c => c.classList.toggle('selected', c.dataset.tpl === tpl));
+  formData.template = tpl;
+}
+
+function setWarna(hex) { formData.warnaUtama = hex; document.getElementById('warnaUtama').value = hex; }
+
+// ---- Preview button: simpan dulu lalu buka tab baru ----
+function openPreview() {
+  if (!formData.nama.trim()) { Utils.showToast('Isi nama UMKM dulu sebelum preview','error'); return; }
+  if (!formData.slug) formData.slug = Utils.generateSlug(formData.nama);
+  // Auto-save sementara ke localStorage
+  if (isEdit) Storage.updateUmkm(formData.id, formData);
+  else {
+    const now = new Date().toISOString();
+    if (!formData.createdAt) { formData.createdAt = now; formData.updatedAt = now; Storage.createUmkm(formData); isEdit = true; }
+    else Storage.updateUmkm(formData.id, formData);
+  }
+  window.open('preview.html?id=' + formData.id, '_blank');
+}
+document.getElementById('previewBtn').onclick = openPreview;
+const btn2 = document.getElementById('previewBtnTampilan');
+if (btn2) btn2.onclick = openPreview;
+
+// ---- Jam Operasional ----
+const hariList = ['senin','selasa','rabu','kamis','jumat','sabtu','minggu'];
+const hariLabel = { senin:'Senin',selasa:'Selasa',rabu:'Rabu',kamis:'Kamis',jumat:'Jumat',sabtu:'Sabtu',minggu:'Minggu' };
+function renderJam() {
+  const grid = document.getElementById('jamGrid');
+  grid.innerHTML = hariList.map(h => `
+    <div class="jam-row">
+      <label>${hariLabel[h]}</label>
+      <input class="form-input" type="text" id="jam-${h}" value="${formData.jamOperasional[h]||''}" placeholder="08.00–17.00 atau Tutup">
+    </div>`).join('');
+  hariList.forEach(h => {
+    document.getElementById(`jam-${h}`).addEventListener('input', function() {
+      formData.jamOperasional[h] = this.value;
+    });
+  });
+}
+document.getElementById('isiSemua').onclick = function() {
+  const val = prompt('Masukkan jam yang sama untuk semua hari:', '08.00–17.00');
+  if (!val) return;
+  hariList.forEach(h => { formData.jamOperasional[h] = val; });
+  renderJam();
+};
+
+// ---- Image uploads ----
+function showImagePreview(areaId, src, field) {
+  const area = document.getElementById(areaId);
+  area.innerHTML = `<div class="upload-preview">
+    <img src="${src}" style="height:140px;object-fit:cover">
+    <button class="upload-remove" onclick="removeImage('${areaId}','${field}')">✕ Hapus</button>
+  </div>`;
+}
+function removeImage(areaId, field) {
+  formData[field] = null;
+  const icons = { logo:'🖼️', banner:'🌅', fotoToko:'🏪' };
+  const hints = { logo:'PNG, JPG', banner:'1200×400px ideal', fotoToko:'Tampak depan' };
+  const inputId = { logo:'logoInput', banner:'bannerInput', fotoToko:'fotoTokoInput' };
+  document.getElementById(areaId).innerHTML = `
+    <div class="upload-area" onclick="document.getElementById('${inputId[field]}').click()">
+      <div class="upload-icon">${icons[field]||'📷'}</div>
+      <p><strong>Klik upload</strong></p>
+      <p style="font-size:12px">${hints[field]||''}</p>
+    </div>`;
+}
+function handleImageInput(inputId, field, areaId) {
+  document.getElementById(inputId).onchange = async function() {
+    if (!this.files[0]) return;
+    const url = await Utils.readFileAsDataUrl(this.files[0]);
+    formData[field] = url;
+    showImagePreview(areaId, url, field);
+  };
+}
+handleImageInput('logoInput','logo','logoArea');
+handleImageInput('bannerInput','banner','bannerArea');
+handleImageInput('fotoTokoInput','fotoToko','fotoTokoArea');
+
+// ---- Galeri ----
+document.getElementById('galeriInput').onchange = async function() {
+  for (const file of this.files) { formData.galeri.push({ url: await Utils.readFileAsDataUrl(file) }); }
+  renderGaleri();
+};
+function renderGaleri() {
+  const grid = document.getElementById('galeriGrid');
+  grid.innerHTML = formData.galeri.map((g,i) => `
+    <div class="galeri-item">
+      <img src="${g.url||g}" onclick="removeGaleri(${i})">
+      <button class="remove" onclick="removeGaleri(${i})">✕</button>
+    </div>`).join('') +
+    `<div style="aspect-ratio:1;border:2px dashed var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-2);font-size:28px" onclick="document.getElementById('galeriInput').click()">+</div>`;
+}
+function removeGaleri(i) { formData.galeri.splice(i,1); renderGaleri(); }
+
+// ---- Produk ----
+function renderProdukList() {
+  const list = document.getElementById('produkList');
+  const empty = document.getElementById('produkEmpty');
+  empty.style.display = formData.produk.length ? 'none' : 'block';
+  list.innerHTML = formData.produk.map((p,i) => `
+    <div class="produk-item">
+      <div style="width:80px;height:80px;border-radius:8px;overflow:hidden;background:#f3f4f6;display:flex;align-items:center;justify-content:center;font-size:28px;border:1px solid var(--border)">
+        ${p.foto ? `<img src="${p.foto}" style="width:100%;height:100%;object-fit:cover">` : '🛍️'}
+      </div>
+      <div>
+        <div style="font-weight:600;font-size:14px">${p.nama}</div>
+        <div style="color:var(--green);font-weight:700;margin-top:4px">${Utils.formatHarga(p.harga)}</div>
+        <div style="color:var(--text-2);font-size:12px;margin-top:4px">${p.deskripsi||''}</div>
+      </div>
+      <div style="display:flex;gap:6px">
+        <button class="btn btn-ghost btn-sm" onclick="editProduk(${i})">✏️</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteProduk(${i})">🗑️</button>
+      </div>
+    </div>`).join('');
+}
+document.getElementById('addProdukBtn').onclick = () => openProdukModal();
+function openProdukModal(idx) {
+  editProdukIdx = idx !== undefined ? idx : null;
+  document.getElementById('produkModalTitle').textContent = editProdukIdx !== null ? 'Edit Produk' : 'Tambah Produk';
+  const p = editProdukIdx !== null ? formData.produk[editProdukIdx] : {};
+  document.getElementById('produkNama').value = p.nama || '';
+  document.getElementById('produkHarga').value = p.harga || '';
+  document.getElementById('produkDesc').value = p.deskripsi || '';
+  document.getElementById('produkFoto').value = '';
+  document.getElementById('produkModal').classList.add('open');
+}
+function editProduk(i) { openProdukModal(i); }
+function deleteProduk(i) { formData.produk.splice(i,1); renderProdukList(); }
+function closeProdukModal() { document.getElementById('produkModal').classList.remove('open'); }
+async function saveProduk() {
+  const nama = document.getElementById('produkNama').value.trim();
+  if (!nama) { alert('Nama produk wajib diisi'); return; }
+  const fotoFile = document.getElementById('produkFoto').files[0];
+  let foto = editProdukIdx !== null ? (formData.produk[editProdukIdx].foto || null) : null;
+  if (fotoFile) foto = await Utils.readFileAsDataUrl(fotoFile);
+  const p = {
+    id: editProdukIdx !== null ? formData.produk[editProdukIdx].id : 'p-'+Date.now(),
+    nama, harga: parseInt(document.getElementById('produkHarga').value)||0,
+    deskripsi: document.getElementById('produkDesc').value, foto,
+  };
+  if (editProdukIdx !== null) formData.produk[editProdukIdx] = p;
+  else formData.produk.push(p);
+  closeProdukModal(); renderProdukList();
+}
+
+// ---- Tabs ----
+document.getElementById('tabsNav').addEventListener('click', function(e) {
+  const btn = e.target.closest('.tab-btn');
+  if (!btn) return;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+});
+
+// ---- Save ----
+document.getElementById('saveBtn').onclick = save;
+function save() {
+  if (!formData.nama.trim()) { Utils.showToast('Nama UMKM wajib diisi','error'); return; }
+  if (!formData.slug.trim()) formData.slug = Utils.generateSlug(formData.nama);
+  if (!formData.kategori) { Utils.showToast('Kategori wajib dipilih','error'); return; }
+  if (isEdit) {
+    Storage.updateUmkm(formData.id, formData);
+    Utils.showToast('Data UMKM berhasil disimpan ✓');
+  } else {
+    const now = new Date().toISOString();
+    formData.createdAt = now; formData.updatedAt = now; formData.publishedAt = null;
+    Storage.createUmkm(formData);
+    isEdit = true;
+    Utils.showToast('UMKM baru berhasil ditambahkan! 🎉');
+  }
+}
+
+// ---- Publish simulation ----
+document.getElementById('publishBtn').onclick = async function() {
+  save();
+  const steps = document.getElementById('publishSteps');
+  steps.style.display = 'flex';
+  const items = [
+    { icon:'✔', label:'Validasi Data' },
+    { icon:'📄', label:'Generate JSON' },
+    { icon:'🖼️', label:'Persiapkan Gambar' },
+    { icon:'📤', label:'Upload ke GitHub' },
+    { icon:'✅', label:'Website Berhasil Dipublish!' },
+  ];
+  steps.innerHTML = items.map((s,i) => `
+    <div class="publish-step" id="pstep-${i}">
+      <div class="step-icon" id="pstep-icon-${i}">⏳</div>
+      <span>${s.label}</span>
+    </div>`).join('');
+  for (let i = 0; i < items.length; i++) {
+    await new Promise(r => setTimeout(r, 700));
+    document.getElementById(`pstep-icon-${i}`).textContent = items[i].icon;
+    document.getElementById(`pstep-icon-${i}`).className = 'step-icon done';
+  }
+  formData.status = 'published'; formData.publishedAt = new Date().toISOString();
+  document.getElementById('statusToggle').checked = true; updateStatusLabel();
+  Storage.updateUmkm(formData.id, formData);
+  Utils.showToast('UMKM berhasil dipublish! 🚀');
+};
+
+// ---- Sidebar ----
+Utils.initSidebar();
+document.getElementById('logoutBtn').onclick = () => { Storage.logout(); window.location.href = 'index.html'; };
+
+// ---- Init ----
+renderJam();
+fillFields();
+</script>
+</body>
+</html>

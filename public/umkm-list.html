@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Semua UMKM — Portal UMKM Panjunan</title>
+<link rel="stylesheet" href="../assets/css/public.css">
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <div class="logo-box">🏪</div>
+      <span id="namaPortalNav">Portal UMKM Panjunan</span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html" class="nav-link">Beranda</a>
+      <a href="umkm-list.html" class="nav-link active">Semua UMKM</a>
+      <a href="daftar-umkm.html" class="nav-link">Daftarkan UMKM</a>
+      <a href="tentang.html" class="nav-link">Tentang</a>
+      <a href="../admin/dashboard.html" class="nav-admin">Admin ↗</a>
+    </div>
+    <button class="nav-hamburger" id="hamburger">☰</button>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html">Beranda</a>
+    <a href="umkm-list.html">Semua UMKM</a>
+    <a href="daftar-umkm.html">Daftarkan UMKM</a>
+    <a href="tentang.html">Tentang</a>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="list-header">
+    <div class="breadcrumb"><a href="index.html">Beranda</a><span>/</span><span>Semua UMKM</span></div>
+    <h1>Semua UMKM</h1>
+    <p style="color:var(--text-2)" id="subtitleCount">Daftar lengkap UMKM di wilayah Panjunan, Kudus</p>
+  </div>
+
+  <!-- Filter -->
+  <div class="list-filter-bar">
+    <div class="list-search">
+      <span class="icon">🔍</span>
+      <input type="text" id="searchInput" placeholder="Cari UMKM...">
+    </div>
+    <select class="list-select" id="filterKat">
+      <option value="">Semua Kategori</option>
+    </select>
+    <select class="list-select" id="sortSelect">
+      <option value="terbaru">Terbaru</option>
+      <option value="nama">Nama A-Z</option>
+      <option value="featured">Unggulan Dulu</option>
+    </select>
+  </div>
+
+  <!-- Category chips -->
+  <div class="cat-chips" id="catChips" style="margin-bottom:24px">
+    <div class="cat-chip active" data-id="">Semua</div>
+  </div>
+
+  <!-- Grid -->
+  <div class="umkm-grid" id="umkmGrid"></div>
+  <div id="emptyState" class="empty" style="display:none">
+    <div class="icon">🔍</div>
+    <h3>Tidak ada UMKM</h3>
+    <p>Coba kata kunci atau filter lain.</p>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div class="footer-brand"><h3 id="footerNama">Portal UMKM Panjunan</h3><p id="footerDesc"></p></div>
+      <div class="footer-col"><h4>Navigasi</h4><a href="index.html">Beranda</a><a href="umkm-list.html">Semua UMKM</a><a href="daftar-umkm.html">Daftarkan UMKM</a><a href="tentang.html">Tentang</a></div>
+      <div class="footer-col"><h4>Kontak</h4><a id="footerWa" href="#">WhatsApp</a><a id="footerIg" href="#">Instagram</a></div>
+    </div>
+    <div class="footer-bottom">© 2026 <span>Portal UMKM Panjunan</span> · Tim KKN · Desa Panjunan, Kudus</div>
+  </div>
+</footer>
+
+<script src="../config.js"></script>
+<script src="../assets/js/storage.js"></script>
+<script src="../assets/js/utils.js"></script>
+<script>
+  const settings = Storage.getSettings();
+  document.getElementById('namaPortalNav').textContent = settings.namaPortal || 'Portal UMKM Panjunan';
+  document.title = `Semua UMKM — ${settings.namaPortal || 'Portal UMKM'}`;
+  document.getElementById('footerNama').textContent = settings.namaPortal || '';
+  document.getElementById('footerDesc').textContent = settings.deskripsiPortal || '';
+  if (settings.whatsapp) document.getElementById('footerWa').href = Utils.waLink(settings.whatsapp);
+  if (settings.instagram) document.getElementById('footerIg').href = Utils.igLink(settings.instagram);
+
+  const cats = Storage.getCategories();
+  let selectedKat = Utils.getParam('kat') || '';
+  let searchQ = Utils.getParam('q') || '';
+
+  // Category filter
+  const filterKat = document.getElementById('filterKat');
+  const chips = document.getElementById('catChips');
+  cats.forEach(c => {
+    const o = document.createElement('option'); o.value = c.id; o.textContent = `${c.ikon} ${c.nama}`; filterKat.appendChild(o);
+    const chip = document.createElement('div'); chip.className = 'cat-chip' + (c.id === selectedKat ? ' active' : ''); chip.dataset.id = c.id; chip.textContent = `${c.ikon} ${c.nama}`; chips.appendChild(chip);
+  });
+  if (selectedKat) { filterKat.value = selectedKat; document.querySelector('.cat-chip[data-id=""]').classList.remove('active'); }
+  if (searchQ) document.getElementById('searchInput').value = searchQ;
+
+  chips.addEventListener('click', function(e) {
+    const chip = e.target.closest('.cat-chip');
+    if (!chip) return;
+    document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    selectedKat = chip.dataset.id;
+    filterKat.value = selectedKat;
+    render();
+  });
+  filterKat.onchange = function() {
+    selectedKat = this.value;
+    document.querySelectorAll('.cat-chip').forEach(c => c.classList.toggle('active', c.dataset.id === selectedKat));
+    render();
+  };
+
+  document.getElementById('searchInput').addEventListener('input', function() { searchQ = this.value.toLowerCase(); render(); });
+  document.getElementById('sortSelect').addEventListener('change', render);
+
+  function render() {
+    let data = Storage.getPublishedUmkm();
+    if (selectedKat) data = data.filter(u => u.kategori === selectedKat);
+    if (searchQ) data = data.filter(u => u.nama.toLowerCase().includes(searchQ) || (u.deskripsi||'').toLowerCase().includes(searchQ) || (u.alamat||'').toLowerCase().includes(searchQ));
+    const sort = document.getElementById('sortSelect').value;
+    if (sort === 'nama') data.sort((a,b) => a.nama.localeCompare(b.nama));
+    else if (sort === 'featured') data.sort((a,b) => (b.featured?1:0) - (a.featured?1:0));
+    else data.sort((a,b) => b.updatedAt.localeCompare(a.updatedAt));
+
+    document.getElementById('subtitleCount').textContent = `${data.length} UMKM ditemukan`;
+    const grid = document.getElementById('umkmGrid');
+    const empty = document.getElementById('emptyState');
+    if (data.length === 0) { grid.innerHTML = ''; empty.style.display = 'block'; return; }
+    empty.style.display = 'none';
+    grid.innerHTML = data.map(u => {
+      const cat = cats.find(c => c.id === u.kategori);
+      return `<div class="umkm-card" onclick="window.location='detail.html?slug=${u.slug}'">
+        <div class="card-banner">
+          ${u.banner ? `<img src="${u.banner}" loading="lazy">` : `<div class="card-banner-placeholder" style="background:${u.warnaUtama}22">🏪</div>`}
+          ${u.featured ? '<span class="featured-badge">⭐ Unggulan</span>' : ''}
+        </div>
+        <div class="card-logo-wrap">
+          <div class="card-logo" style="background:${u.warnaUtama}22;color:${u.warnaUtama}">
+            ${u.logo ? `<img src="${u.logo}">` : u.nama.charAt(0)}
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-kategori">${cat ? `${cat.ikon} ${cat.nama}` : u.kategori}</div>
+          <div class="card-nama">${u.nama}</div>
+          <div class="card-desc">${u.deskripsi || 'Belum ada deskripsi.'}</div>
+          <div class="card-footer">
+            <div class="card-alamat">📍 ${u.alamat || 'Panjunan, Kudus'}</div>
+            <span class="card-action" style="background:${u.warnaUtama}">Lihat →</span>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  document.getElementById('hamburger').onclick = () => document.getElementById('mobileMenu').classList.toggle('open');
+  render();
+</script>
+</body>
+</html>

@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pengaturan — Admin UMKM Panjunan</title>
+<link rel="stylesheet" href="../assets/css/admin.css">
+</head>
+<body>
+<div class="layout">
+
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-row">
+      <div class="logo-box">🏪</div>
+      <div class="logo-text"><h2>UMKM Panjunan</h2><p>Panel Admin</p></div>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">
+      <div class="nav-label">Menu Utama</div>
+      <a href="dashboard.html" class="nav-item"><span class="nav-icon">📊</span> Dashboard</a>
+      <a href="umkm-list.html" class="nav-item"><span class="nav-icon">🏪</span> Daftar UMKM</a>
+      <a href="umkm-form.html" class="nav-item"><span class="nav-icon">➕</span> Tambah UMKM</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Pengaturan</div>
+      <a href="settings.html" class="nav-item active"><span class="nav-icon">⚙️</span> Pengaturan</a>
+      <a href="../public/index.html" target="_blank" class="nav-item"><span class="nav-icon">🌐</span> Lihat Portal</a>
+    </div>
+  </nav>
+  <div class="sidebar-footer"><button class="logout-btn" id="logoutBtn">🚪 Keluar</button></div>
+</aside>
+
+<div class="main">
+  <header class="topbar">
+    <div style="display:flex;align-items:center;gap:12px">
+      <button class="hamburger" id="hamburger">☰</button>
+      <div class="topbar-left"><h2>Pengaturan</h2><p>Konfigurasi portal dan kategori</p></div>
+    </div>
+  </header>
+
+  <div class="page-content settings-layout">
+
+    <!-- Settings Nav -->
+    <div class="card">
+      <div class="card-body" style="padding:12px">
+        <div class="settings-sidebar">
+          <button class="settings-nav-item active" data-panel="portal">🌐 Info Portal</button>
+          <button class="settings-nav-item" data-panel="kategori">🏷️ Kategori</button>
+          <button class="settings-nav-item" data-panel="data">💾 Data</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Settings Panels -->
+    <div>
+
+      <!-- Panel: Portal -->
+      <div id="panel-portal">
+        <div class="card">
+          <div class="card-header"><h3>Informasi Portal</h3></div>
+          <div class="card-body">
+            <div class="form-group">
+              <label class="form-label">Nama Portal</label>
+              <input class="form-input" id="namaPortal" type="text" placeholder="Portal UMKM Panjunan">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Deskripsi Portal</label>
+              <textarea class="form-textarea" id="deskripsiPortal" rows="3" placeholder="Deskripsi singkat portal..."></textarea>
+            </div>
+            <div class="form-row form-row-2">
+              <div class="form-group">
+                <label class="form-label">Alamat</label>
+                <input class="form-input" id="alamatPortal" type="text">
+              </div>
+              <div class="form-group">
+                <label class="form-label">WhatsApp</label>
+                <input class="form-input" id="waPortal" type="text">
+              </div>
+            </div>
+            <div class="form-row form-row-2">
+              <div class="form-group">
+                <label class="form-label">Email</label>
+                <input class="form-input" id="emailPortal" type="email">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Instagram</label>
+                <input class="form-input" id="igPortal" type="text" placeholder="namaakun">
+              </div>
+            </div>
+            <button class="btn btn-primary" id="savePortal">💾 Simpan Pengaturan</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Panel: Kategori -->
+      <div id="panel-kategori" style="display:none">
+        <div class="card">
+          <div class="card-header">
+            <h3>Kelola Kategori</h3>
+            <button class="btn btn-outline btn-sm" id="addKatBtn">+ Tambah Kategori</button>
+          </div>
+          <div class="card-body">
+            <div id="katList"></div>
+          </div>
+        </div>
+
+        <div class="card" id="katFormCard" style="margin-top:16px;display:none">
+          <div class="card-header"><h3>Tambah Kategori Baru</h3></div>
+          <div class="card-body">
+            <div class="form-row form-row-2">
+              <div class="form-group">
+                <label class="form-label">Nama Kategori</label>
+                <input class="form-input" id="katNama" type="text" placeholder="Kuliner">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Ikon (emoji)</label>
+                <input class="form-input" id="katIkon" type="text" placeholder="🍽️" style="font-size:20px">
+              </div>
+            </div>
+            <div style="display:flex;gap:10px">
+              <button class="btn btn-primary" id="saveKatBtn">Simpan</button>
+              <button class="btn btn-outline" id="cancelKatBtn">Batal</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Panel: Data -->
+      <div id="panel-data" style="display:none">
+        <div class="card">
+          <div class="card-header"><h3>Export & Import Data</h3></div>
+          <div class="card-body">
+            <div style="display:flex;flex-direction:column;gap:16px">
+              <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:20px">
+                <h4 style="margin-bottom:8px">📤 Export Data</h4>
+                <p style="font-size:13px;color:var(--text-2);margin-bottom:14px">Download semua data UMKM dalam format JSON. Berguna untuk backup atau migrasi ke Google Sheets.</p>
+                <button class="btn btn-primary" id="exportBtn">Download umkm.json</button>
+              </div>
+              <div style="background:#fef9c3;border:1px solid #fde68a;border-radius:10px;padding:20px">
+                <h4 style="margin-bottom:8px">📥 Import Data</h4>
+                <p style="font-size:13px;color:var(--text-2);margin-bottom:14px">Upload file JSON untuk mengganti semua data. ⚠️ Data lama akan terhapus.</p>
+                <input type="file" id="importFile" accept=".json" style="margin-bottom:10px">
+                <button class="btn btn-outline" id="importBtn">Import JSON</button>
+              </div>
+              <div style="background:#fee2e2;border:1px solid #fecaca;border-radius:10px;padding:20px">
+                <h4 style="margin-bottom:8px;color:#dc2626">🗑️ Reset Data</h4>
+                <p style="font-size:13px;color:var(--text-2);margin-bottom:14px">Hapus semua data dan kembali ke data contoh bawaan.</p>
+                <button class="btn btn-danger" id="resetBtn">Reset ke Data Default</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+</div>
+
+<script src="../config.js"></script>
+<script src="../assets/js/gas.js"></script>
+<script src="../assets/js/storage.js"></script>
+<script src="../assets/js/utils.js"></script>
+<script>
+  if (!Storage.requireAuth()) {}
+
+  // Settings nav
+  document.querySelector('.settings-sidebar').addEventListener('click', function(e) {
+    const btn = e.target.closest('.settings-nav-item');
+    if (!btn) return;
+    document.querySelectorAll('.settings-nav-item').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('[id^="panel-"]').forEach(p => p.style.display = 'none');
+    document.getElementById('panel-' + btn.dataset.panel).style.display = 'block';
+  });
+
+  // Portal settings
+  const s = Storage.getSettings();
+  document.getElementById('namaPortal').value = s.namaPortal || '';
+  document.getElementById('deskripsiPortal').value = s.deskripsiPortal || '';
+  document.getElementById('alamatPortal').value = s.alamat || '';
+  document.getElementById('waPortal').value = s.whatsapp || '';
+  document.getElementById('emailPortal').value = s.email || '';
+  document.getElementById('igPortal').value = s.instagram || '';
+
+  document.getElementById('savePortal').onclick = function() {
+    Storage.saveSettings({
+      ...s,
+      namaPortal: document.getElementById('namaPortal').value,
+      deskripsiPortal: document.getElementById('deskripsiPortal').value,
+      alamat: document.getElementById('alamatPortal').value,
+      whatsapp: document.getElementById('waPortal').value,
+      email: document.getElementById('emailPortal').value,
+      instagram: document.getElementById('igPortal').value,
+    });
+    Utils.showToast('Pengaturan berhasil disimpan ✓');
+  };
+
+  // Kategori
+  function renderKat() {
+    const cats = Storage.getCategories();
+    document.getElementById('katList').innerHTML = cats.map(c => `
+      <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)">
+        <span style="font-size:22px">${c.ikon}</span>
+        <div style="flex:1;font-weight:600">${c.nama}</div>
+        <button class="btn btn-danger btn-sm" onclick="deleteKat('${c.id}')">Hapus</button>
+      </div>`).join('') || '<p style="color:var(--text-2);text-align:center;padding:20px">Belum ada kategori</p>';
+  }
+  function deleteKat(id) {
+    if (confirm('Hapus kategori ini?')) { Storage.deleteCategory(id); renderKat(); }
+  }
+  renderKat();
+
+  document.getElementById('addKatBtn').onclick = () => document.getElementById('katFormCard').style.display = 'block';
+  document.getElementById('cancelKatBtn').onclick = () => document.getElementById('katFormCard').style.display = 'none';
+  document.getElementById('saveKatBtn').onclick = function() {
+    const nama = document.getElementById('katNama').value.trim();
+    if (!nama) { alert('Nama kategori wajib diisi'); return; }
+    Storage.addCategory({ id: Utils.generateSlug(nama) + '-' + Date.now(), nama, ikon: document.getElementById('katIkon').value || '📦', urutan: Storage.getCategories().length + 1 });
+    document.getElementById('katNama').value = ''; document.getElementById('katIkon').value = '';
+    document.getElementById('katFormCard').style.display = 'none';
+    renderKat();
+    Utils.showToast('Kategori berhasil ditambahkan');
+  };
+
+  // Export
+  document.getElementById('exportBtn').onclick = function() {
+    const data = { umkm: Storage.getAllUmkm(), settings: Storage.getSettings(), categories: Storage.getCategories() };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'umkm-panjunan-export.json'; a.click();
+    Utils.showToast('Data berhasil diexport 📤');
+  };
+
+  // Import
+  document.getElementById('importBtn').onclick = function() {
+    const file = document.getElementById('importFile').files[0];
+    if (!file) { alert('Pilih file JSON terlebih dahulu'); return; }
+    const r = new FileReader();
+    r.onload = function(e) {
+      try {
+        const data = JSON.parse(e.target.result);
+        if (!confirm('Import akan mengganti semua data saat ini. Lanjutkan?')) return;
+        if (data.umkm) Storage.saveUmkm(data.umkm);
+        if (data.settings) Storage.saveSettings(data.settings);
+        if (data.categories) Storage.saveCategories(data.categories);
+        Utils.showToast('Data berhasil diimport ✓');
+        setTimeout(() => location.reload(), 1000);
+      } catch (err) { alert('File JSON tidak valid: ' + err.message); }
+    };
+    r.readAsText(file);
+  };
+
+  // Reset
+  document.getElementById('resetBtn').onclick = function() {
+    if (!confirm('Semua data akan dihapus dan kembali ke contoh bawaan. Yakin?')) return;
+    localStorage.removeItem('sgp_umkm');
+    localStorage.removeItem('sgp_settings');
+    localStorage.removeItem('sgp_categories');
+    Utils.showToast('Data direset ke default');
+    setTimeout(() => location.reload(), 800);
+  };
+
+  Utils.initSidebar();
+  document.getElementById('logoutBtn').onclick = () => { Storage.logout(); window.location.href = 'index.html'; };
+</script>
+</body>
+</html>

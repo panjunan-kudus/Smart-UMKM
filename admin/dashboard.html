@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dashboard — Admin UMKM Panjunan</title>
+<link rel="stylesheet" href="../assets/css/admin.css">
+</head>
+<body>
+<div class="layout">
+
+<!-- Sidebar -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-row">
+      <div class="logo-box">🏪</div>
+      <div class="logo-text">
+        <h2>UMKM Panjunan</h2>
+        <p>Panel Admin</p>
+      </div>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">
+      <div class="nav-label">Menu Utama</div>
+      <a href="dashboard.html" class="nav-item active"><span class="nav-icon">📊</span> Dashboard</a>
+      <a href="umkm-list.html" class="nav-item"><span class="nav-icon">🏪</span> Daftar UMKM</a>
+      <a href="umkm-form.html" class="nav-item"><span class="nav-icon">➕</span> Tambah UMKM</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Pengaturan</div>
+      <a href="settings.html" class="nav-item"><span class="nav-icon">⚙️</span> Pengaturan</a>
+      <a href="../public/index.html" target="_blank" class="nav-item"><span class="nav-icon">🌐</span> Lihat Portal</a>
+    </div>
+  </nav>
+  <div class="sidebar-footer">
+    <button class="logout-btn" id="logoutBtn">🚪 Keluar</button>
+  </div>
+</aside>
+
+<!-- Main -->
+<div class="main">
+  <header class="topbar">
+    <div style="display:flex;align-items:center;gap:12px">
+      <button class="hamburger" id="hamburger">☰</button>
+      <div class="topbar-left">
+        <h2>Dashboard</h2>
+        <p id="greetingText">Selamat datang kembali!</p>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <a href="umkm-form.html" class="btn btn-primary btn-sm">+ Tambah UMKM</a>
+    </div>
+  </header>
+
+  <div class="page-content">
+
+    <!-- Stats -->
+    <div class="stats-grid" id="statsGrid">
+      <div class="stat-card"><div class="stat-icon green">🏪</div><div class="stat-info"><h3 id="statTotal">0</h3><p>Total UMKM</p></div></div>
+      <div class="stat-card"><div class="stat-icon blue">✅</div><div class="stat-info"><h3 id="statPublished">0</h3><p>Terpublish</p></div></div>
+      <div class="stat-card"><div class="stat-icon yellow">⏳</div><div class="stat-info"><h3 id="statPending">0</h3><p>Pending Approval</p></div></div>
+      <div class="stat-card"><div class="stat-icon yellow">📝</div><div class="stat-info"><h3 id="statDraft">0</h3><p>Draft</p></div></div>
+      <div class="stat-card"><div class="stat-icon purple">⭐</div><div class="stat-info"><h3 id="statFeatured">0</h3><p>Unggulan</p></div></div>
+    </div>
+
+    <!-- Charts + Recent -->
+    <div class="dash-grid">
+      <!-- Kategori Chart -->
+      <div class="card">
+        <div class="card-header">
+          <h3>📈 Distribusi Kategori</h3>
+        </div>
+        <div class="card-body" id="categoryChart" style="min-height:200px"></div>
+      </div>
+
+      <!-- Recent -->
+      <div class="card">
+        <div class="card-header">
+          <h3>🕒 UMKM Terbaru</h3>
+          <a href="umkm-list.html" class="btn btn-ghost btn-sm">Lihat Semua</a>
+        </div>
+        <div class="card-body" id="recentList"></div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="card" style="margin-top:20px">
+      <div class="card-header"><h3>⚡ Aksi Cepat</h3></div>
+      <div class="card-body" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px">
+        <a href="umkm-form.html" class="btn btn-outline" style="justify-content:center;padding:16px">➕ Tambah UMKM Baru</a>
+        <a href="umkm-list.html" class="btn btn-outline" style="justify-content:center;padding:16px">📋 Kelola Daftar UMKM</a>
+        <a href="settings.html" class="btn btn-outline" style="justify-content:center;padding:16px">⚙️ Pengaturan Portal</a>
+        <a href="../public/index.html" target="_blank" class="btn btn-outline" style="justify-content:center;padding:16px">🌐 Buka Portal Publik</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<script src="../config.js"></script>
+<script src="../assets/js/gas.js"></script>
+<script src="../assets/js/storage.js"></script>
+<script src="../assets/js/utils.js"></script>
+<script>
+  if (!Storage.requireAuth()) {}
+
+  // Greeting
+  const hour = new Date().getHours();
+  document.getElementById('greetingText').textContent =
+    hour < 11 ? 'Selamat pagi! ☀️' : hour < 15 ? 'Selamat siang! 🌤' : hour < 18 ? 'Selamat sore! 🌅' : 'Selamat malam! 🌙';
+
+  // Stats
+  const all = Storage.getAllUmkm();
+  document.getElementById('statTotal').textContent = all.length;
+  document.getElementById('statPublished').textContent = all.filter(u => u.status === 'published').length;
+  document.getElementById('statPending').textContent = all.filter(u => u.status === 'pending').length;
+  document.getElementById('statDraft').textContent = all.filter(u => u.status === 'draft').length;
+  document.getElementById('statFeatured').textContent = all.filter(u => u.featured).length;
+
+  // Category chart (simple bar)
+  const cats = Storage.getCategories();
+  const byKat = {};
+  all.forEach(u => { byKat[u.kategori] = (byKat[u.kategori] || 0) + 1; });
+  const chartEl = document.getElementById('categoryChart');
+  if (Object.keys(byKat).length === 0) {
+    chartEl.innerHTML = '<div class="empty-state"><div class="empty-icon">📊</div><p>Belum ada data UMKM</p></div>';
+  } else {
+    const max = Math.max(...Object.values(byKat));
+    chartEl.innerHTML = Object.entries(byKat).map(([k, v]) => {
+      const cat = cats.find(c => c.id === k);
+      const label = cat ? `${cat.ikon} ${cat.nama}` : k;
+      const pct = Math.round((v / max) * 100);
+      return `<div style="margin-bottom:14px">
+        <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px">
+          <span style="font-weight:500">${label}</span>
+          <span style="font-weight:700;color:var(--green)">${v} UMKM</span>
+        </div>
+        <div style="background:#f3f4f6;border-radius:6px;height:10px;overflow:hidden">
+          <div style="height:100%;width:${pct}%;background:var(--green);border-radius:6px;transition:width .6s ease"></div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  // Recent
+  const recent = [...all].sort((a,b) => b.updatedAt.localeCompare(a.updatedAt)).slice(0, 6);
+  const recentEl = document.getElementById('recentList');
+  if (recent.length === 0) {
+    recentEl.innerHTML = '<div class="empty-state"><div class="empty-icon">🏪</div><p>Belum ada UMKM</p></div>';
+  } else {
+    recentEl.innerHTML = recent.map(u => `
+      <div class="recent-item">
+        <div class="thumb" style="background:${u.warnaUtama}22;font-size:20px;color:${u.warnaUtama}">
+          ${u.logo ? `<img src="${u.logo}" style="width:40px;height:40px;object-fit:contain;border-radius:8px">` : u.nama.charAt(0)}
+        </div>
+        <div class="recent-info">
+          <strong>${u.nama}</strong>
+          <span>${Utils.getLabelKategori(u.kategori, cats)} · ${Utils.formatTanggal(u.updatedAt)}</span>
+        </div>
+        <span class="badge ${u.status === 'published' ? 'badge-green' : 'badge-gray'}">${u.status === 'published' ? 'Publish' : u.status === 'pending' ? 'Pending' : u.status === 'rejected' ? 'Rejected' : 'Draft'}</span>
+      </div>`).join('');
+  }
+
+  // Sidebar toggle
+  Utils.initSidebar();
+  document.getElementById('logoutBtn').onclick = () => { Storage.logout(); window.location.href = 'index.html'; };
+</script>
+</body>
+</html>

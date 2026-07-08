@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Portal UMKM Panjunan</title>
+<link rel="stylesheet" href="../assets/css/public.css">
+</head>
+<body>
+
+<!-- Nav -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <div class="logo-box">🏪</div>
+      <span id="namaPortalNav">Portal UMKM Panjunan</span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html" class="nav-link active">Beranda</a>
+      <a href="umkm-list.html" class="nav-link">Semua UMKM</a>
+      <a href="daftar-umkm.html" class="nav-link">Daftarkan UMKM</a>
+      <a href="tentang.html" class="nav-link">Tentang</a>
+      <a href="../admin/dashboard.html" class="nav-admin">Admin ↗</a>
+    </div>
+    <button class="nav-hamburger" id="hamburger">☰</button>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html">Beranda</a>
+    <a href="umkm-list.html">Semua UMKM</a>
+    <a href="daftar-umkm.html">Daftarkan UMKM</a>
+    <a href="tentang.html">Tentang</a>
+    <a href="../admin/dashboard.html">Admin Panel</a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-badge">🌿 Desa Panjunan, Kudus</div>
+    <h1>Temukan UMKM Unggulan<br><span id="heroNama">Panjunan, Kudus</span></h1>
+    <p id="heroDesc">Platform digital untuk UMKM unggulan wilayah Panjunan — dikelola oleh tim KKN untuk mendukung ekonomi lokal.</p>
+    <div class="search-bar">
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" placeholder="Cari nama, kategori, atau alamat UMKM...">
+        <button class="search-btn" onclick="doSearch()">Cari</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Main Content -->
+<div class="container">
+
+  <!-- Category Chips -->
+  <section>
+    <div class="cat-chips" id="catChips">
+      <div class="cat-chip active" data-id="">Semua</div>
+    </div>
+
+    <!-- Featured -->
+    <div id="featuredSection">
+      <div class="section-header">
+        <h2>⭐ UMKM Unggulan</h2>
+        <a href="umkm-list.html" class="see-all">Lihat semua →</a>
+      </div>
+      <div class="umkm-grid" id="featuredGrid"></div>
+    </div>
+
+    <!-- All UMKM -->
+    <div style="margin-top:40px">
+      <div class="section-header">
+        <h2 id="allTitle">🏪 Semua UMKM</h2>
+        <span id="allCount" style="font-size:13px;color:var(--text-2)"></span>
+      </div>
+      <div class="umkm-grid" id="allGrid"></div>
+      <div id="emptyState" class="empty" style="display:none">
+        <div class="icon">🔍</div>
+        <h3>UMKM tidak ditemukan</h3>
+        <p>Coba kata kunci atau kategori lain.</p>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <h3 id="footerNama">Portal UMKM Panjunan</h3>
+        <p id="footerDesc">Platform digital untuk mendukung UMKM lokal.</p>
+        <p style="margin-top:12px;font-size:12px" id="footerAlamat"></p>
+      </div>
+      <div class="footer-col">
+        <h4>Navigasi</h4>
+        <a href="index.html">Beranda</a>
+        <a href="umkm-list.html">Semua UMKM</a>
+        <a href="daftar-umkm.html">Daftarkan UMKM</a>
+        <a href="tentang.html">Tentang Portal</a>
+      </div>
+      <div class="footer-col">
+        <h4>Kontak</h4>
+        <a id="footerWa" href="#">WhatsApp</a>
+        <a id="footerIg" href="#">Instagram</a>
+        <a href="../admin/index.html">Admin Login</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      © 2026 <span id="footerNama2">Portal UMKM Panjunan</span> · Dikelola oleh Tim KKN · Desa Panjunan, Kudus
+    </div>
+  </div>
+</footer>
+
+<script src="../config.js"></script>
+<script src="../assets/js/storage.js"></script>
+<script src="../assets/js/utils.js"></script>
+<script>
+  let selectedKat = '';
+  let searchQ = '';
+
+  // Load settings
+  const settings = Storage.getSettings();
+  document.title = settings.namaPortal || 'Portal UMKM Panjunan';
+  document.getElementById('namaPortalNav').textContent = settings.namaPortal || 'Portal UMKM Panjunan';
+  document.getElementById('heroNama').textContent = (settings.namaPortal || 'Portal UMKM Panjunan').replace('Portal ','');
+  document.getElementById('heroDesc').textContent = settings.deskripsiPortal || '';
+  document.getElementById('footerNama').textContent = settings.namaPortal || '';
+  document.getElementById('footerNama2').textContent = settings.namaPortal || '';
+  document.getElementById('footerDesc').textContent = settings.deskripsiPortal || '';
+  document.getElementById('footerAlamat').textContent = settings.alamat || '';
+  if (settings.whatsapp) document.getElementById('footerWa').href = Utils.waLink(settings.whatsapp);
+  if (settings.instagram) document.getElementById('footerIg').href = Utils.igLink(settings.instagram);
+
+  // Load categories
+  const cats = Storage.getCategories();
+  const chips = document.getElementById('catChips');
+  cats.forEach(c => {
+    const el = document.createElement('div');
+    el.className = 'cat-chip'; el.dataset.id = c.id;
+    el.textContent = `${c.ikon} ${c.nama}`;
+    chips.appendChild(el);
+  });
+  chips.addEventListener('click', function(e) {
+    const chip = e.target.closest('.cat-chip');
+    if (!chip) return;
+    document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    selectedKat = chip.dataset.id;
+    renderAll();
+  });
+
+  function umkmCard(u) {
+    const cat = cats.find(c => c.id === u.kategori);
+    return `<div class="umkm-card" onclick="window.location='detail.html?slug=${u.slug}'">
+      <div class="card-banner">
+        ${u.banner ? `<img src="${u.banner}" alt="${u.nama}" loading="lazy">` :
+          `<div class="card-banner-placeholder" style="background:${u.warnaUtama}22;font-size:48px">🏪</div>`}
+        ${u.featured ? '<span class="featured-badge">⭐ Unggulan</span>' : ''}
+      </div>
+      <div class="card-logo-wrap">
+        <div class="card-logo" style="background:${u.warnaUtama}22;color:${u.warnaUtama}">
+          ${u.logo ? `<img src="${u.logo}" alt="logo">` : u.nama.charAt(0)}
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-kategori">${cat ? `${cat.ikon} ${cat.nama}` : u.kategori}</div>
+        <div class="card-nama">${u.nama}</div>
+        <div class="card-desc">${u.deskripsi || 'Tidak ada deskripsi.'}</div>
+        <div class="card-footer">
+          <div class="card-alamat">📍 ${u.alamat || 'Panjunan, Kudus'}</div>
+          <span class="card-action" style="background:${u.warnaUtama}">Lihat →</span>
+        </div>
+      </div>
+    </div>`;
+  }
+
+  function renderAll() {
+    let data = Storage.getPublishedUmkm();
+    if (selectedKat) data = data.filter(u => u.kategori === selectedKat);
+    if (searchQ) data = data.filter(u =>
+      u.nama.toLowerCase().includes(searchQ) ||
+      (u.deskripsi||'').toLowerCase().includes(searchQ) ||
+      (u.kategori||'').toLowerCase().includes(searchQ) ||
+      (u.alamat||'').toLowerCase().includes(searchQ));
+
+    const featured = data.filter(u => u.featured);
+    const featSec = document.getElementById('featuredSection');
+    const featGrid = document.getElementById('featuredGrid');
+    featSec.style.display = featured.length && !searchQ && !selectedKat ? 'block' : 'none';
+    featGrid.innerHTML = featured.slice(0,3).map(umkmCard).join('');
+
+    const allGrid = document.getElementById('allGrid');
+    const empty = document.getElementById('emptyState');
+    document.getElementById('allCount').textContent = `${data.length} UMKM`;
+    if (data.length === 0) { allGrid.innerHTML = ''; empty.style.display = 'block'; }
+    else { empty.style.display = 'none'; allGrid.innerHTML = data.map(umkmCard).join(''); }
+  }
+
+  function doSearch() {
+    searchQ = document.getElementById('searchInput').value.toLowerCase().trim();
+    renderAll();
+  }
+  document.getElementById('searchInput').addEventListener('keyup', function(e) {
+    if (e.key === 'Enter') doSearch();
+    if (this.value === '') { searchQ = ''; renderAll(); }
+  });
+
+  document.getElementById('hamburger').onclick = () => document.getElementById('mobileMenu').classList.toggle('open');
+
+  // Check query params
+  const urlQ = Utils.getParam('q');
+  if (urlQ) { document.getElementById('searchInput').value = urlQ; searchQ = urlQ.toLowerCase(); }
+  const urlKat = Utils.getParam('kat');
+  if (urlKat) {
+    selectedKat = urlKat;
+    document.querySelectorAll('.cat-chip').forEach(c => c.classList.toggle('active', c.dataset.id === urlKat));
+  }
+
+  renderAll();
+</script>
+</body>
+</html>

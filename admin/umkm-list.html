@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Daftar UMKM — Admin UMKM Panjunan</title>
+<link rel="stylesheet" href="../assets/css/admin.css">
+</head>
+<body>
+<div class="layout">
+
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-row">
+      <div class="logo-box">🏪</div>
+      <div class="logo-text"><h2>UMKM Panjunan</h2><p>Panel Admin</p></div>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">
+      <div class="nav-label">Menu Utama</div>
+      <a href="dashboard.html" class="nav-item"><span class="nav-icon">📊</span> Dashboard</a>
+      <a href="umkm-list.html" class="nav-item active"><span class="nav-icon">🏪</span> Daftar UMKM</a>
+      <a href="umkm-form.html" class="nav-item"><span class="nav-icon">➕</span> Tambah UMKM</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Pengaturan</div>
+      <a href="settings.html" class="nav-item"><span class="nav-icon">⚙️</span> Pengaturan</a>
+      <a href="../public/index.html" target="_blank" class="nav-item"><span class="nav-icon">🌐</span> Lihat Portal</a>
+    </div>
+  </nav>
+  <div class="sidebar-footer"><button class="logout-btn" id="logoutBtn">🚪 Keluar</button></div>
+</aside>
+
+<div class="main">
+  <header class="topbar">
+    <div style="display:flex;align-items:center;gap:12px">
+      <button class="hamburger" id="hamburger">☰</button>
+      <div class="topbar-left"><h2>Daftar UMKM</h2><p id="countLabel">Memuat data...</p></div>
+    </div>
+    <div class="topbar-right">
+      <a href="umkm-form.html" class="btn btn-primary btn-sm">+ Tambah UMKM</a>
+    </div>
+  </header>
+
+  <div class="page-content">
+    <div class="card">
+      <!-- Filter Bar -->
+      <div class="filter-bar">
+        <div class="search-input-wrap">
+          <span class="icon">🔍</span>
+          <input type="text" id="searchInput" placeholder="Cari nama UMKM...">
+        </div>
+        <select class="filter-select" id="filterStatus">
+          <option value="">Semua Status</option>
+          <option value="pending">Pending</option>
+          <option value="published">Terpublish</option>
+          <option value="draft">Draft</option>
+          <option value="rejected">Rejected</option>
+        </select>
+        <select class="filter-select" id="filterKategori">
+          <option value="">Semua Kategori</option>
+        </select>
+        <select class="filter-select" id="filterFeatured">
+          <option value="">Semua</option>
+          <option value="1">⭐ Unggulan</option>
+        </select>
+      </div>
+
+      <!-- Table -->
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:44px"></th>
+              <th>Nama UMKM</th>
+              <th>Kategori</th>
+              <th>Template</th>
+              <th>Status</th>
+              <th>Unggulan</th>
+              <th>Diperbarui</th>
+              <th style="width:160px">Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody">
+            <tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text-2)">Memuat...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div id="emptyState" class="empty-state" style="display:none">
+        <div class="empty-icon">🏪</div>
+        <h3>Belum ada UMKM</h3>
+        <p>Klik tombol "+ Tambah UMKM" untuk mulai menambahkan data.</p>
+        <a href="umkm-form.html" class="btn btn-primary" style="margin-top:16px">+ Tambah UMKM Pertama</a>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- Delete Confirm Modal -->
+<div class="modal-overlay" id="deleteModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Hapus UMKM?</h3>
+      <button class="modal-close" id="closeDeleteModal">✕</button>
+    </div>
+    <p style="color:var(--text-2);font-size:14px">Data UMKM <strong id="deleteNama"></strong> akan dihapus permanen. Tindakan ini tidak bisa dibatalkan.</p>
+    <div class="modal-footer">
+      <button class="btn btn-outline" id="closeDeleteModal2">Batal</button>
+      <button class="btn btn-danger" id="confirmDelete">Ya, Hapus</button>
+    </div>
+  </div>
+</div>
+
+<script src="../config.js"></script>
+<script src="../assets/js/gas.js"></script>
+<script src="../assets/js/storage.js"></script>
+<script src="../assets/js/utils.js"></script>
+<script>
+  if (!Storage.requireAuth()) {}
+
+  let cats = Storage.getCategories();
+  let deleteId = null;
+
+  // Populate filter
+  const filterKat = document.getElementById('filterKategori');
+  cats.forEach(c => {
+    const o = document.createElement('option');
+    o.value = c.id; o.textContent = `${c.ikon} ${c.nama}`;
+    filterKat.appendChild(o);
+  });
+
+  function render() {
+    const q = document.getElementById('searchInput').value.toLowerCase();
+    const status = document.getElementById('filterStatus').value;
+    const kat = document.getElementById('filterKategori').value;
+    const feat = document.getElementById('filterFeatured').value;
+
+    let data = Storage.getAllUmkm();
+    if (q) data = data.filter(u => u.nama.toLowerCase().includes(q) || (u.alamat||'').toLowerCase().includes(q));
+    if (status) data = data.filter(u => u.status === status);
+    if (kat) data = data.filter(u => u.kategori === kat);
+    if (feat) data = data.filter(u => u.featured);
+
+    document.getElementById('countLabel').textContent = `${data.length} UMKM ditemukan`;
+    const body = document.getElementById('tableBody');
+    const empty = document.getElementById('emptyState');
+
+    if (data.length === 0) {
+      body.innerHTML = '';
+      empty.style.display = 'block';
+      return;
+    }
+    empty.style.display = 'none';
+
+    const templateLabel = { minimal:'Minimal', modern:'Modern', gallery:'Gallery', premium:'Premium' };
+    const statusLabel = { published:'Publish', pending:'Pending', draft:'Draft', rejected:'Rejected' };
+    body.innerHTML = data.map(u => {
+      const catObj = cats.find(c => c.id === u.kategori);
+      const catLabel = catObj ? `${catObj.ikon} ${catObj.nama}` : u.kategori;
+      const reviewButtons = u.status === 'pending' || u.status === 'rejected'
+        ? `<button class="btn btn-primary btn-sm" onclick="approveUmkm('${u.id}')" title="Approve">Approve</button>
+           ${u.status === 'pending' ? `<button class="btn btn-outline btn-sm" onclick="rejectUmkm('${u.id}')" title="Reject">Reject</button>` : ''}`
+        : '';
+      return `<tr>
+        <td>
+          <div class="thumb" style="background:${u.warnaUtama}22;color:${u.warnaUtama};font-size:18px">
+            ${u.logo ? `<img src="${u.logo}">` : u.nama.charAt(0)}
+          </div>
+        </td>
+        <td>
+          <div class="td-name">${u.nama}</div>
+          <div class="td-meta">/${u.slug}</div>
+        </td>
+        <td>${catLabel}</td>
+        <td><span style="background:#f3f4f6;padding:3px 10px;border-radius:6px;font-size:12px;font-weight:600">${templateLabel[u.template]||u.template}</span></td>
+        <td>
+          <span class="badge badge-dot ${u.status==='published'?'badge-green':'badge-gray'}">
+            ${statusLabel[u.status] || u.status || 'Draft'}
+          </span>
+        </td>
+        <td style="text-align:center">${u.featured ? '⭐' : '—'}</td>
+        <td style="font-size:12px;color:var(--text-2)">${Utils.formatTanggal(u.updatedAt)}</td>
+        <td>
+          <div class="btn-group">
+            ${reviewButtons}
+            <a href="umkm-form.html?id=${u.id}" class="btn btn-outline btn-sm" title="Edit">✏️</a>
+            <a href="preview.html?id=${u.id}" class="btn btn-outline btn-sm" title="Preview">👁</a>
+            <button class="btn btn-outline btn-sm ${u.status==='published'?'':'btn-primary'}" onclick="togglePublish('${u.id}','${u.status}')" title="${u.status==='published'?'Unpublish':'Publish'}">
+              ${u.status === 'published' ? '⬇️' : '🚀'}
+            </button>
+            <button class="btn btn-danger btn-sm" onclick="openDelete('${u.id}','${u.nama}')" title="Hapus">🗑️</button>
+          </div>
+        </td>
+      </tr>`;
+    }).join('');
+  }
+
+  function togglePublish(id, currentStatus) {
+    if (currentStatus === 'published') {
+      Storage.unpublishUmkm(id);
+      Utils.showToast('UMKM berhasil di-unpublish');
+    } else {
+      Storage.publishUmkm(id);
+      Utils.showToast('UMKM berhasil dipublish! 🚀');
+    }
+    render();
+  }
+
+  function approveUmkm(id) {
+    Storage.publishUmkm(id);
+    Utils.showToast('UMKM berhasil di-approve dan dipublish');
+    render();
+  }
+
+  function rejectUmkm(id) {
+    Storage.updateUmkm(id, { status: 'rejected', publishedAt: null });
+    Utils.showToast('Pengajuan UMKM ditolak');
+    render();
+  }
+
+  function openDelete(id, nama) {
+    deleteId = id;
+    document.getElementById('deleteNama').textContent = nama;
+    document.getElementById('deleteModal').classList.add('open');
+  }
+
+  document.getElementById('closeDeleteModal').onclick =
+  document.getElementById('closeDeleteModal2').onclick = () => document.getElementById('deleteModal').classList.remove('open');
+
+  document.getElementById('confirmDelete').onclick = () => {
+    if (deleteId) { Storage.deleteUmkm(deleteId); Utils.showToast('UMKM berhasil dihapus'); deleteId = null; }
+    document.getElementById('deleteModal').classList.remove('open');
+    render();
+  };
+
+  ['searchInput','filterStatus','filterKategori','filterFeatured'].forEach(id => {
+    document.getElementById(id).addEventListener('input', render);
+    document.getElementById(id).addEventListener('change', render);
+  });
+
+  Utils.initSidebar();
+  document.getElementById('logoutBtn').onclick = () => { Storage.logout(); window.location.href = 'index.html'; };
+
+  render();
+</script>
+</body>
+</html>

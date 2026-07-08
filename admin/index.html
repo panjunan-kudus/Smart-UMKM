@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Login Admin — UMKM Panjunan</title>
+<link rel="stylesheet" href="../assets/css/admin.css">
+</head>
+<body class="login-page">
+
+<div class="login-card">
+  <div class="login-logo">
+    <div class="logo-icon">🏪</div>
+    <h1>UMKM Panjunan</h1>
+    <p>Panel Admin Desa Panjunan, Kudus</p>
+  </div>
+
+  <div class="login-hint">
+    🔑 Username: <strong>admin</strong> &nbsp;·&nbsp; Password: <strong>admin123</strong>
+  </div>
+
+  <form id="loginForm">
+    <div class="form-group">
+      <label class="form-label">Username</label>
+      <input class="form-input" type="text" id="username" value="admin" autocomplete="username" required>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <div class="input-group" style="position:relative">
+        <input class="form-input" type="password" id="password" value="admin123" autocomplete="current-password" required>
+        <button type="button" id="togglePwd" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text-2);font-size:16px">👁</button>
+      </div>
+    </div>
+    <div id="loginError" style="display:none;color:#ef4444;font-size:13px;margin-bottom:12px;background:#fee2e2;padding:10px 14px;border-radius:8px">
+      Username atau password salah.
+    </div>
+    <button type="submit" class="btn btn-primary btn-lg" style="width:100%;justify-content:center">
+      Masuk ke Dashboard →
+    </button>
+  </form>
+
+  <p style="text-align:center;margin-top:20px;font-size:12px;color:var(--text-3)">
+    Portal UMKM Panjunan · KKN Universitas · 2026
+  </p>
+</div>
+
+<script src="../config.js"></script>
+<script src="../assets/js/gas.js"></script>
+<script src="../assets/js/storage.js"></script>
+<script>
+  if (Storage.isLoggedIn()) window.location.href = 'dashboard.html';
+
+  document.getElementById('togglePwd').onclick = function() {
+    const pwd = document.getElementById('password');
+    pwd.type = pwd.type === 'password' ? 'text' : 'password';
+  };
+
+  document.getElementById('loginForm').onsubmit = function(e) {
+    e.preventDefault();
+    const u = document.getElementById('username').value.trim();
+    const p = document.getElementById('password').value;
+    if (Storage.login(u, p)) {
+      window.location.href = 'dashboard.html';
+    } else {
+      document.getElementById('loginError').style.display = 'block';
+    }
+  };
+</script>
+</body>
+</html>

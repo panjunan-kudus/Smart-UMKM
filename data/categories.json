@@ -1,0 +1,9 @@
+[
+  { "id": "kuliner", "nama": "Kuliner", "ikon": "🍽️", "urutan": 1 },
+  { "id": "fashion", "nama": "Fashion & Busana", "ikon": "👗", "urutan": 2 },
+  { "id": "kerajinan", "nama": "Souvenir & Kerajinan", "ikon": "🎁", "urutan": 3 },
+  { "id": "jasa", "nama": "Jasa", "ikon": "🔧", "urutan": 4 },
+  { "id": "cafe", "nama": "Cafe", "ikon": "☕", "urutan": 5 },
+  { "id": "retail", "nama": "Retail", "ikon": "🏪", "urutan": 6 },
+  { "id": "lainnya", "nama": "Lainnya", "ikon": "📦", "urutan": 7 }
+]

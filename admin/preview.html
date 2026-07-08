@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Preview UMKM — Admin</title>
+<link rel="stylesheet" href="../assets/css/admin.css">
+<style>
+  body { margin: 0; overflow: hidden; }
+  .preview-shell { display: flex; flex-direction: column; height: 100vh; }
+  .preview-topnav { background: #1e293b; color: #e2e8f0; padding: 10px 20px; display: flex; align-items: center; gap: 16px; flex-shrink: 0; }
+  .preview-topnav select { background: #334155; color: #e2e8f0; border: 1px solid #475569; border-radius: 6px; padding: 6px 10px; font-size: 13px; }
+  .preview-topnav .sep { color: #475569; }
+  .viewport-btns { display: flex; gap: 6px; }
+  .vbtn { background: #334155; border: none; color: #94a3b8; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600; }
+  .vbtn.on { background: #16a34a; color: #fff; }
+  .preview-bar { background: #f1f5f9; border-bottom: 1px solid #e2e8f0; padding: 8px 20px; display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+  .dots { display: flex; gap: 6px; }
+  .dots span { width: 10px; height: 10px; border-radius: 50%; }
+  .url-bar { flex: 1; background: white; border: 1px solid #e2e8f0; border-radius: 20px; padding: 5px 14px; font-size: 12px; color: #6b7280; }
+  .preview-stage { flex: 1; overflow: auto; background: #e2e8f0; display: flex; justify-content: center; padding: 16px; }
+  iframe { border: none; border-radius: 8px; box-shadow: 0 8px 32px rgba(0,0,0,.2); height: calc(100vh - 130px); background: white; transition: width .3s; }
+</style>
+</head>
+<body>
+<div class="preview-shell">
+
+  <!-- Top Nav -->
+  <div class="preview-topnav">
+    <a href="umkm-list.html" style="color:#94a3b8;font-size:22px;line-height:1">←</a>
+    <div class="sep">|</div>
+    <select id="umkmSelect">
+      <option value="">Pilih UMKM...</option>
+    </select>
+    <div class="sep">|</div>
+    <select id="templateSelect">
+      <option value="minimal">Minimal</option>
+      <option value="modern">Modern</option>
+      <option value="gallery">Gallery</option>
+      <option value="premium">Premium</option>
+    </select>
+    <div class="sep">|</div>
+    <div class="viewport-btns">
+      <button class="vbtn on" onclick="setView('desktop',this)">🖥 Desktop</button>
+      <button class="vbtn" onclick="setView('tablet',this)">📱 Tablet</button>
+      <button class="vbtn" onclick="setView('mobile',this)">📲 Mobile</button>
+    </div>
+    <div style="flex:1"></div>
+    <button onclick="refresh()" style="background:#334155;border:none;color:#e2e8f0;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:12px">↻ Refresh</button>
+  </div>
+
+  <!-- Browser Bar -->
+  <div class="preview-bar">
+    <div class="dots">
+      <span style="background:#fc5c65"></span>
+      <span style="background:#fed330"></span>
+      <span style="background:#26de81"></span>
+    </div>
+    <div class="url-bar" id="urlBar">portal-umkm-panjunan.github.io/</div>
+  </div>
+
+  <!-- Preview Stage -->
+  <div class="preview-stage" id="stage">
+    <iframe id="previewFrame" width="100%"></iframe>
+  </div>
+</div>
+
+<script src="../config.js"></script>
+<script src="../assets/js/gas.js"></script>
+<script src="../assets/js/storage.js"></script>
+<script src="../assets/js/utils.js"></script>
+<script src="../assets/js/templates.js"></script>
+<script>
+  if (!Storage.requireAuth()) {}
+
+  const urlId = Utils.getParam('id');
+  const frame = document.getElementById('previewFrame');
+  const umkmSelect = document.getElementById('umkmSelect');
+  const tplSelect = document.getElementById('templateSelect');
+  let currentUmkm = null;
+
+  // Populate UMKM select
+  const all = Storage.getAllUmkm();
+  all.forEach(u => {
+    const o = document.createElement('option');
+    o.value = u.id; o.textContent = u.nama;
+    if (u.id === urlId) o.selected = true;
+    umkmSelect.appendChild(o);
+  });
+
+  function loadUmkm(id) {
+    currentUmkm = Storage.getUmkmById(id);
+    if (!currentUmkm) { frame.srcdoc = '<p style="font-family:sans-serif;padding:40px;color:#6b7280">Pilih UMKM dari daftar di atas.</p>'; return; }
+    tplSelect.value = currentUmkm.template;
+    document.getElementById('urlBar').textContent = `portal-umkm-panjunan.github.io/${currentUmkm.slug}`;
+    renderPreview();
+  }
+
+  function renderPreview() {
+    if (!currentUmkm) return;
+    currentUmkm.template = tplSelect.value;
+    frame.srcdoc = Templates.render(currentUmkm);
+  }
+
+  function setView(mode, btn) {
+    document.querySelectorAll('.vbtn').forEach(b => b.classList.remove('on'));
+    btn.classList.add('on');
+    const widths = { desktop: '100%', tablet: '768px', mobile: '390px' };
+    frame.style.width = widths[mode];
+    frame.style.minWidth = mode === 'desktop' ? '100%' : widths[mode];
+  }
+
+  function refresh() { renderPreview(); }
+
+  umkmSelect.onchange = function() { loadUmkm(this.value); };
+  tplSelect.onchange = renderPreview;
+
+  if (urlId) loadUmkm(urlId);
+  else if (all.length) { umkmSelect.value = all[0].id; loadUmkm(all[0].id); }
+</script>
+</body>
+</html>
